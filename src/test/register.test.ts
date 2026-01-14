@@ -1,11 +1,22 @@
 import { vi, describe, it, expect, beforeEach,test } from "vitest";
 import { isValidEmail } from "../services/register.services.js";
 
-vi.mock("../lib/prisma.js", () => ({
-  prisma: { user: { findUnique: vi.fn(), create: vi.fn() } },
-}));
+
+vi.mock("../lib/prisma.js", () => {
+  return {
+    prisma: {
+      user: {
+        findUnique: vi.fn(),
+        create: vi.fn(),
+      },
+    },
+  };
+});
 import { createUser } from "../services/register.services.js";
 import { prisma } from "../lib/prisma.js";
+
+const findUnique = prisma.user.findUnique as unknown as ReturnType<typeof vi.fn>;
+const create = prisma.user.create as unknown as ReturnType<typeof vi.fn>;
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -40,7 +51,7 @@ describe("createUser", () => {
     expect(res.status).toBe(400);
   });
   it("returns 409 when email is already in use", async () => {
-    (prisma.user.findUnique as any).mockResolvedValue({
+    findUnique.mockResolvedValue({
       id: "existing-user-id",
       firstname: "Existing",
       lastname: "User",
@@ -57,8 +68,8 @@ describe("createUser", () => {
   });
 
   it("creates a user when data is valid", async () => {
-    (prisma.user.findUnique as any).mockResolvedValue(null);
-    (prisma.user.create as any).mockResolvedValue({
+    findUnique.mockResolvedValue(null);
+    create.mockResolvedValue({
       id: "b3d9e2f0-1a2b-4c3d-8e9f-0123456789ab",
       firstname: "Alice",
       lastname: "Doe",
