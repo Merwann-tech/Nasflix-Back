@@ -19,7 +19,7 @@ export async function createUser(Body: {
       error: "Password must be at least 8 characters long",
     };
   }
-  let hashedPassword = await hashPassword(Body.password);
+  const hashedPassword = await hashPassword(Body.password);
   if (!isValidEmail(Body.email)) {
     return {
       status: 400,
@@ -38,7 +38,7 @@ export async function createUser(Body: {
       error: "Email already in use",
     };
   }
-  
+
   await prisma.user.create({
     data: {
       firstname: Body.firstname,
