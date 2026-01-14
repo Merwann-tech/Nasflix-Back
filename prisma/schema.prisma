@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Movie {
+  id            String     @id @default(uuid())
+  title         String
+  synopsis      String
+  releaseDate   DateTime
+  duration      Int
+  language      String
+  country       String
+  averageRating Int
+  createdAt     DateTime    @default(now())
+  url           String
+  updatedAt     DateTime    @updatedAt
+  categorieId   String
+  images        Image[]
+  moviesPerson  MoviesPerson[]
+  UserFilmHistory UserFilmHistory[]
+  categorie     Category    @relation(fields: [categorieId], references: [id])
+}
+
+model Image {
+  id       String   @id @default(uuid())
+  url      String
+  type     Int
+  movieId  String
+  movie    Movie    @relation(fields: [movieId], references: [id])
+}
+
+model Category {
+  id      String    @id @default(uuid())
+  name    String
+  houseId String
+  house   House     @relation(fields: [houseId], references: [id])
+  movies  Movie[]
+}
+
+model House {
+  id          String     @id @default(uuid())
+  name        String
+  creatorId   String
+  creator     User       @relation(fields: [creatorId], references: [id])
+  categories  Category[]
+  moviesHousesAccess MoviesHousesAccess[]
+}
+
+model User {
+  id          String            @id @default(uuid())
+  firstname   String
+  lastname    String
+  email       String            @unique
+  password    String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  houses      MoviesHousesAccess[] @relation("UserHouses")
+  grantedAccesses MoviesHousesAccess[] @relation("GrantedAccesses")
+  createdHouses House[]
+  histories   UserFilmHistory[]
+}
+
+model MoviesHousesAccess {
+  userId     String
+  houseId    String
+  role       String
+  grantedBy  String
+  grantedAt  DateTime
+  user       User     @relation("UserHouses", fields: [userId], references: [id])
+  grantedByUser User  @relation("GrantedAccesses", fields: [grantedBy], references: [id])
+  house      House    @relation(fields: [houseId], references: [id])
+  @@id([userId, houseId])
+}
+
+model UserFilmHistory {
+  id             String     @id @default(uuid())
+  userId         String
+  movieId        String
+  watched        Boolean
+  watchedAt      DateTime
+  progressSeconds Int
+  rating         Int
+  ratingAt       DateTime
+  review         String
+  reviewAt       DateTime
+  updatedAt      DateTime
+  createdAt      DateTime   @default(now())
+  user           User       @relation(fields: [userId], references: [id])
+  movie          Movie      @relation(fields: [movieId], references: [id])
+}
+
+model Person {
+  id          String       @id @default(uuid())
+  name        String
+  bio         String
+  imageUrl    String
+  birthDate   DateTime
+  moviesPerson MoviesPerson[]
+}
+
+model MoviesPerson {
+  movieId     String
+  personId    String
+  creditType  String
+  caracterName String?
+  creditOrder Int
+  createdAt   DateTime
+  movie       Movie    @relation(fields: [movieId], references: [id])
+  person      Person   @relation(fields: [personId], references: [id])
+  @@id([movieId, personId])
+}
