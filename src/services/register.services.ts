@@ -1,5 +1,7 @@
 import { prisma } from "../lib/prisma.js";
 import { hashPassword } from "./password.services.js";
+import { createToken } from "./token.services.js";
+
 
 export async function createUser(Body: {
   password: string;
@@ -50,6 +52,7 @@ export async function createUser(Body: {
   return {
     status: 201,
     message: "User created successfully",
+    token: createToken({ userEmail: Body.email }),
   };
 }
 
