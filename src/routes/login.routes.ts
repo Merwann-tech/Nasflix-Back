@@ -5,8 +5,8 @@ const router = Router();
 router.use(express.json());
 
 router.post('/', async (req : Request, res :Response) => {
-    const response = await loginUser(req.body)
-    res.json(response);
+    await loginUser(req.body, res);
+
 });
 // {
 //     "email": "user@example.com",

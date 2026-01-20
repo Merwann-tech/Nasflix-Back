@@ -5,3 +5,5 @@ dist
 db
 sql
 /src/generated/prisma
+*.db
+*.db-journal
