@@ -34,7 +34,7 @@ export async function createUser(
         return res.status(409).json({ message: "Email already in use" });
     }
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
         data: {
             firstname: Body.firstname,
             lastname: Body.lastname,
@@ -44,7 +44,7 @@ export async function createUser(
     });
     return res
         .status(201)
-        .json({ message: "User created successfully", token: createToken({ userEmail: Body.email }) });
+        .json({ message: "User created successfully", token: createToken({ userId: user.id }) });
 }
 
 export function isValidEmail(email: string): boolean {

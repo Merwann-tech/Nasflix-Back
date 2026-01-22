@@ -29,7 +29,7 @@ model Movie {
   images        Image[]
   moviesPerson  MoviesPerson[]
   UserFilmHistory UserFilmHistory[]
-  categorie     Category    @relation(fields: [categorieId], references: [id])
+  categorie     Category    @relation(fields: [categorieId], references: [id], onDelete: Cascade)
 }
 
 model Image {
@@ -37,14 +37,14 @@ model Image {
   url      String
   type     Int
   movieId  String
-  movie    Movie    @relation(fields: [movieId], references: [id])
+  movie    Movie    @relation(fields: [movieId], references: [id], onDelete: Cascade)
 }
 
 model Category {
   id      String    @id @default(uuid())
   name    String
   houseId String
-  house   House     @relation(fields: [houseId], references: [id])
+  house   House     @relation(fields: [houseId], references: [id], onDelete: Cascade)
   movies  Movie[]
 }
 
@@ -79,7 +79,7 @@ model MoviesHousesAccess {
   grantedAt  DateTime
   user       User     @relation("UserHouses", fields: [userId], references: [id])
   grantedByUser User  @relation("GrantedAccesses", fields: [grantedBy], references: [id])
-  house      House    @relation(fields: [houseId], references: [id])
+  house      House    @relation(fields: [houseId], references: [id], onDelete: Cascade)
   @@id([userId, houseId])
 }
 
@@ -97,7 +97,7 @@ model UserFilmHistory {
   updatedAt      DateTime
   createdAt      DateTime   @default(now())
   user           User       @relation(fields: [userId], references: [id])
-  movie          Movie      @relation(fields: [movieId], references: [id])
+  movie          Movie      @relation(fields: [movieId], references: [id], onDelete: Cascade)
 }
 
 model Person {
@@ -116,7 +116,7 @@ model MoviesPerson {
   caracterName String?
   creditOrder Int
   createdAt   DateTime
-  movie       Movie    @relation(fields: [movieId], references: [id])
+  movie       Movie    @relation(fields: [movieId], references: [id], onDelete: Cascade)
   person      Person   @relation(fields: [personId], references: [id])
   @@id([movieId, personId])
 }
